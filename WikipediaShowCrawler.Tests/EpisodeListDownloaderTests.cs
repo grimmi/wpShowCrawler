@@ -11,15 +11,17 @@ namespace WikipediaShowCrawler.Tests
     public class EpisodeListDownloaderTests
     {
         [Test]
-        public async Task DownloadPage_ExistingWikipediaPageTitle_SuccessfullyDownloadPage()
+        [TestCase("Modern Family", 2, 24)]
+        [TestCase("The Simpsons", 2, 22)]
+        public async Task DownloadPage_ExistingWikipediaPageTitle_SuccessfullyDownloadPage(string showName,
+            int expectedSeasons, int expectedEpisodes)
         {
-            var epListDownloader = new EpisodeListDownloader("Modern Family");
+            var epListDownloader = new EpisodeListDownloader(showName);
 
             var episodeList = await epListDownloader.DownloadEpisodeList();
 
-            Assert.AreEqual("Modern Family", episodeList.ShowName);
-            Assert.AreEqual(8, episodeList.Seasons.Count());
-            Assert.AreEqual(168, episodeList.Seasons.Sum(s => s.Episodes.Count()));
+            Assert.AreEqual(showName, episodeList.ShowName);
+            Assert.AreEqual(expectedEpisodes, episodeList.Seasons.ElementAt(expectedSeasons).Episodes.Count());
         }
     }
 }
