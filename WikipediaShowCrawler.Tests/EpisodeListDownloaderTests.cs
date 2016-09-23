@@ -18,6 +18,8 @@ namespace WikipediaShowCrawler.Tests
             var episodeList = await epListDownloader.DownloadEpisodeList();
 
             Assert.AreEqual("Modern Family", episodeList.ShowName);
+            Assert.AreEqual(8, episodeList.Seasons.Count());
+            Assert.AreEqual(168, episodeList.Seasons.Sum(s => s.Episodes.Count()));
         }
     }
 }
