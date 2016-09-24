@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HtmlAgilityPack;
+using TvShowManager;
 
 namespace WikipediaShowCrawler
 {
@@ -29,7 +30,17 @@ namespace WikipediaShowCrawler
             var seasonCounter = 1;
             foreach (var seasonTable in seasonTables)
             {
-                yield return ParseSeason(seasonTable, seasonCounter++);
+                Season season = null;
+                try
+                {
+                    season = ParseSeason(seasonTable, seasonCounter++);
+                    season.ShowName = showName;
+                }
+                catch (FormatException ex)
+                {
+                    continue;
+                }
+                yield return season;
             }
         }
 

@@ -12,13 +12,13 @@ namespace WikipediaShowCrawler.Tests
     {
         [Test]
         [TestCase("Modern Family", 2, 24)]
-        [TestCase("The Simpsons", 2, 22)]
+        [TestCase("The Simpsons", 2, 24)]
         public async Task DownloadPage_ExistingWikipediaPageTitle_SuccessfullyDownloadPage(string showName,
             int expectedSeasons, int expectedEpisodes)
         {
-            var epListDownloader = new EpisodeListDownloader(showName);
+            var epListDownloader = new EpisodeListDownloader();
 
-            var episodeList = await epListDownloader.DownloadEpisodeList();
+            var episodeList = await epListDownloader.DownloadEpisodeListAsync(showName);
 
             Assert.AreEqual(showName, episodeList.ShowName);
             Assert.AreEqual(expectedEpisodes, episodeList.Seasons.ElementAt(expectedSeasons).Episodes.Count());
