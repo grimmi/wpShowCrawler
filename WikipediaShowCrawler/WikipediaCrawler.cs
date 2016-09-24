@@ -6,7 +6,7 @@ using TvShowManager.Interfaces;
 
 namespace WikipediaShowCrawler
 {
-    public class EpisodeListDownloader : IEpisodeCrawler
+    public class WikipediaCrawler : IEpisodeCrawler
     {
         private string showName;
         private string enWpPrefix = "https://en.wikipedia.org/api/rest_v1/page/html/";

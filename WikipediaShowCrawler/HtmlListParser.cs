@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using HtmlAgilityPack;
 using TvShowManager;
@@ -61,7 +62,7 @@ namespace WikipediaShowCrawler
             {
                 var episode = ParseEpisode(episodeRow);
                 if (string.IsNullOrWhiteSpace(episode.Name)
-                    || episode.Name.Equals("TBA") 
+                    || episode.Name.Equals("TBA")
                     || episode.FirstAired == default(DateTime)
                     || episode.FirstAired.Equals(new DateTime(1970, 1, 1)))
                 {
@@ -93,16 +94,27 @@ namespace WikipediaShowCrawler
         {
             var dateString = episodeRow.Descendants("span").FirstOrDefault(n => n.Attributes.Contains("class")
                                                                            && n.Attributes["class"].Value.Contains("dtstart"))?.InnerHtml;
+
             var date = string.IsNullOrWhiteSpace(dateString)
                 ? new DateTime(1970, 1, 1)
                 : DateTime.ParseExact(dateString, "yyyy-MM-dd", null);
+
+            if (date.Year == 1970 && date.Month == 1 && date.Day == 1)
+            {
+                var dateNode = episodeRow.Descendants("td").Skip(4).FirstOrDefault();
+                dateString = dateNode.InnerText;
+                date = string.IsNullOrWhiteSpace(dateString)
+                      ? new DateTime(1970, 1, 1)
+                      : DateTime.ParseExact(dateString, "MMMM d, yyyy", CultureInfo.GetCultureInfo("en-US"));
+            }
 
             return date;
         }
 
         private string ExtractEpisodeTitle(HtmlNode episodeRow)
         {
-            var title = episodeRow.Descendants("td").Skip(1).FirstOrDefault()?.Descendants("a").FirstOrDefault()?.InnerHtml;
+            var title = episodeRow.Descendants("td").Skip(1).FirstOrDefault()?.InnerText;
+                //.Descendants("a").FirstOrDefault()?.InnerHtml;
             return title;
         }
 
