@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using TvShowManager;
@@ -10,9 +11,16 @@ namespace WikipediaShowCrawler
     {
         private string showName;
         private string enWpPrefix = "https://en.wikipedia.org/api/rest_v1/page/html/";
+
+        private readonly Dictionary<string, EpisodeList> cache = new Dictionary<string, EpisodeList>();
         
         public async Task<EpisodeList> DownloadEpisodeListAsync(string showName)
         {
+            if (cache.ContainsKey(showName))
+            {
+                return cache[showName];
+            }
+
             this.showName = showName;
             using (var client = new HttpClient())
             {
@@ -24,6 +32,11 @@ namespace WikipediaShowCrawler
                 var list = parser.ParseResponse();
 
                 list = await CheckSpecialCases(list);
+
+                if (!cache.ContainsKey(showName))
+                {
+                    cache.Add(showName, list);
+                }
 
                 return list;
             }
@@ -40,8 +53,33 @@ namespace WikipediaShowCrawler
                     var addParser = new HtmlListParser(showName, addResponse);
                     var addList = addParser.ParseResponse();
 
-                    defaultList.Seasons = defaultList.Seasons.Select(s => new Season { Episodes = s.Episodes, Number = s.Number + 20 })
-                    .Union(addList.Seasons).OrderBy(s => s.Number);
+                    defaultList.Seasons = defaultList.Seasons
+                        .Select(s =>
+                        {
+                            var season = new Season
+                            {
+                                Number = s.Number + 20,
+                                ShowName = s.ShowName
+                            };
+                            season.Episodes = s.Episodes
+                            .Select(e => new Episode
+                                        {
+                                            FirstAired = e.FirstAired,
+                                            Name = e.Name,
+                                            Number = e.Number,
+                                            Season = season
+                                        });
+                            return season;
+                        })
+                        .Union(addList.Seasons).OrderBy(s => s.Number);
+
+                    foreach (var season in defaultList.Seasons)
+                    {
+                        foreach (var episode in season.Episodes)
+                        {
+                            episode.Season = season;
+                        }
+                    }
                 }
             }
             return defaultList;

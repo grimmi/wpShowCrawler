@@ -25,5 +25,20 @@ namespace WikipediaShowCrawler.Tests
             Assert.AreEqual(showName, episodeList.ShowName);
             Assert.AreEqual(expectedEpisodes, episodeList.Seasons.First(s => s.Number == seasonToCheck).Episodes.Count());
         }
+
+        [Test]
+        public async Task DownloadEpisodeListAsync_TheSimpsons_CorrectlyNumberSeasons()
+        {
+            var wpCrawler = new WikipediaCrawler();
+            var episodeList = await wpCrawler.DownloadEpisodeListAsync("The Simpsons");
+
+            var s10e01 = episodeList.Seasons.First(s => s.Number == 10).Episodes.First(e => e.Number == 1);
+            Assert.AreEqual("Lard of the Dance", s10e01.Name);
+            Assert.AreEqual(10, s10e01.Season.Number);
+
+            var s21e01 = episodeList.Seasons.First(s => s.Number == 21).Episodes.First(e => e.Number == 1);
+            Assert.AreEqual(21, s21e01.Season.Number);
+            Assert.AreEqual("Homer the Whopper", s21e01.Name);
+        }
     }
 }

@@ -39,6 +39,7 @@ namespace WikipediaShowCrawler
                 }
                 catch (FormatException ex)
                 {
+                    seasonCounter--;
                     continue;
                 }
                 yield return season;
@@ -113,7 +114,7 @@ namespace WikipediaShowCrawler
 
         private string ExtractEpisodeTitle(HtmlNode episodeRow)
         {
-            var title = episodeRow.Descendants("td").Skip(1).FirstOrDefault()?.InnerText;
+            var title = episodeRow.Descendants("td").Skip(1).FirstOrDefault()?.InnerText.Trim(new [] {'"'});
                 //.Descendants("a").FirstOrDefault()?.InnerHtml;
             return title;
         }
