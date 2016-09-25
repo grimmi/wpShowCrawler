@@ -40,5 +40,19 @@ namespace WikipediaShowCrawler.Tests
             Assert.AreEqual(21, s21e01.Season.Number);
             Assert.AreEqual("Homer the Whopper", s21e01.Name);
         }
+
+        [Test]
+        public async Task DownloadEpisodeListAsync_EpisodeListWithDescriptions_CorrectlyLoadList()
+        {
+            var wpCrawler = new WikipediaCrawler();
+            var episodeList = await wpCrawler.DownloadEpisodeListAsync("Brooklyn Nine-Nine");
+
+            var s01e01 = episodeList.Seasons.First().Episodes.First();
+            var s01e10 = episodeList.Seasons.First().Episodes.First(e => e.Number == 10);
+            Assert.AreEqual("Pilot", s01e01.Name);
+            Assert.AreEqual("Thanksgiving", s01e10.Name);
+            Assert.AreEqual(22, episodeList.Seasons.First().Episodes.Count());
+            Assert.AreEqual(23, episodeList.Seasons.Skip(1).First().Episodes.Count());
+        }
     }
 }

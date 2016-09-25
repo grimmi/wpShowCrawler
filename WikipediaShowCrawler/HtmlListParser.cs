@@ -78,7 +78,11 @@ namespace WikipediaShowCrawler
 
         private IEnumerable<HtmlNode> GetEpisodeRows(HtmlNode seasonTable)
         {
-            var episodeRows = seasonTable.Descendants("tr").Skip(1);
+            var episodeRows = seasonTable.Descendants("tr").Skip(1).Where(row =>
+            {
+                return !row.ChildNodes.Any(
+                    n => n.Attributes.Contains("class") && n.Attributes["class"].Value.Equals("description"));
+            });
             return episodeRows;
         }
 
