@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -24,8 +25,15 @@ namespace WikipediaShowCrawler
             this.showName = showName;
             using (var client = new HttpClient())
             {
-                var response =
-                    await client.GetStringAsync(enWpPrefix + $"List_of_{showName.Replace(" ", "_")}_episodes");
+                var response = "";
+                try
+                {
+                    response = await client.GetStringAsync(enWpPrefix + $"List_of_{showName.Replace(" ", "_")}_episodes");
+                }
+                catch (Exception ex)
+                {
+                    response = await client.GetStringAsync(enWpPrefix + showName.Replace(" ", "_"));
+                }
 
                 var parser = new HtmlListParser(showName, response);
 

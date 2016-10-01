@@ -118,17 +118,26 @@ namespace WikipediaShowCrawler
 
         private string ExtractEpisodeTitle(HtmlNode episodeRow)
         {
-            var title = episodeRow.Descendants("td").Skip(1).FirstOrDefault()?.InnerText.Trim(new [] {'"'});
-                //.Descendants("a").FirstOrDefault()?.InnerHtml;
-            return title;
+            var extractor = new EpisodeTitleExtractor(episodeRow);
+            return extractor.ExtractEpisodeTitle();
         }
 
         private int ExtractEpisodeNumber(HtmlNode episodeRow)
         {
-            var episodeString = episodeRow.Descendants("td").FirstOrDefault()?.InnerHtml;
-            var episodeNumber = string.IsNullOrWhiteSpace(episodeString) ? 0 : int.Parse(episodeString);
+            try
+            {
+                var episodeString = episodeRow.Descendants("td").FirstOrDefault()?.InnerHtml;
+                var episodeNumber = string.IsNullOrWhiteSpace(episodeString) ? 0 : int.Parse(episodeString);
 
-            return episodeNumber;
+                return episodeNumber;
+            }
+            catch (FormatException formatEx)
+            {
+                var episodeString = episodeRow.Descendants("th").FirstOrDefault()?.InnerHtml;
+                var episodeNumber = string.IsNullOrWhiteSpace(episodeString) ? 0 : int.Parse(episodeString);
+
+                return episodeNumber;
+            }
         }
     }
 }

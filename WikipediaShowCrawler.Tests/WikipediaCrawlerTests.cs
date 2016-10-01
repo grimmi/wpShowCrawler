@@ -10,7 +10,7 @@ namespace WikipediaShowCrawler.Tests
     {
         [Test]
         [TestCase("Modern Family", 3, 24, 8)]
-        [TestCase("The Simpsons", 3, 24, 28)]
+        [TestCase("The Simpsons", 3, 24, 29)]
         [TestCase("Bob's Burgers", 6, 19, 7)]
         public async Task DownloadPage_ExistingWikipediaPageTitle_SuccessfullyDownloadPage(string showName,
             int seasonToCheck, int expectedEpisodes, int totalNumberOfSeasons)
@@ -53,6 +53,17 @@ namespace WikipediaShowCrawler.Tests
             Assert.AreEqual("Thanksgiving", s01e10.Name);
             Assert.AreEqual(22, episodeList.Seasons.First().Episodes.Count());
             Assert.AreEqual(23, episodeList.Seasons.Skip(1).First().Episodes.Count());
+        }
+
+        [Test]
+        public async Task DownloadEpisodeListAsync_EpisodeListOnShowPage_CorrectlyLoadList()
+        {
+            var wpCrawler = new WikipediaCrawler();
+            var episodeList = await wpCrawler.DownloadEpisodeListAsync("The Good Place");
+
+            var s01e01 = episodeList.Seasons.First().Episodes.First();
+
+            Assert.AreEqual("Chapter 1: Pilot", s01e01.Name);
         }
     }
 }
