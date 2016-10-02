@@ -65,5 +65,16 @@ namespace WikipediaShowCrawler.Tests
 
             Assert.AreEqual("Chapter 1: Pilot", s01e01.Name);
         }
+
+        [Test]
+        public async Task DownloadEpisodeListAsync_iZombie_S02E05CorrectlyRecognized()
+        {
+            var wpCrawler = new WikipediaCrawler();
+            var episodeList = await wpCrawler.DownloadEpisodeListAsync("iZombie");
+
+            var s02e05 = episodeList.Seasons.ElementAt(1).Episodes.First(e => e.Number == 5);
+
+            Assert.AreEqual("Love & Basketball", s02e05.Name);
+        }
     }
 }

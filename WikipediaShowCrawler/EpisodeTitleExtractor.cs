@@ -26,7 +26,7 @@ namespace WikipediaShowCrawler
             {
                 title = EpisodeRow.Descendants("td").Skip(1).FirstOrDefault()?.InnerText.Trim(new[] { '"' });
             }
-            return title;
+            return title.Replace("&amp;", "&");
         }
     }
 }
