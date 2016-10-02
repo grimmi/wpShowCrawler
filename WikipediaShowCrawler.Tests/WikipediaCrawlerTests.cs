@@ -62,8 +62,10 @@ namespace WikipediaShowCrawler.Tests
             var episodeList = await wpCrawler.DownloadEpisodeListAsync("The Good Place");
 
             var s01e01 = episodeList.Seasons.First().Episodes.First();
+            var s01e02 = episodeList.Seasons.First().Episodes.Skip(1).First();
 
             Assert.AreEqual("Chapter 1: Pilot", s01e01.Name);
+            Assert.AreEqual("Chapter 2: Flying", s01e02.Name);
         }
 
         [Test]
